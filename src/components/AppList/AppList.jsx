@@ -151,5 +151,6 @@ const AppList = () => {
     </Box>
   )
 }
+AppList.displayName = 'AppList'
 
 export default AppList

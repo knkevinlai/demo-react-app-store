@@ -23,7 +23,7 @@ Open [http://localhost:5000](http://localhost:5000) to view it in the browser.
 
 ## Bonus Features 👍
 - PWA > essential UI skeleton and config
-- Dark theme
+- Dark theme (auto detection + user preference stored in browser's local storage)
 - API response schema validation
 - Minimum responsive
 - Loading indicator UI
@@ -31,6 +31,7 @@ Open [http://localhost:5000](http://localhost:5000) to view it in the browser.
 - Jss-in-Css > better css dynamics in SPA by using Emotion
 - React Context API for state management
 - Lifecycle with React hooks
+- Eslint configured
 
 ## Checklist (Essential Features)
 1. ✅ App listing, app recommendation, and search
@@ -53,4 +54,5 @@ Open [http://localhost:5000](http://localhost:5000) to view it in the browser.
 
 ## Note 📝
 - Using online CORS proxy service "CORS Anywhere" to bypass CORS issue with Apple's API policy
+- The ranking of apps from RSS feed of Apple is changing from time to time, so it is possible when scroll to the page 2, the apps in page 1 will be refreshed and modified.
 - node.js v10.x and v12.x compatible tested.

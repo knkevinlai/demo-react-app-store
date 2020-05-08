@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core'
 import PropTypes from 'prop-types'
-import { Fragment } from 'react'
+import { memo, Fragment } from 'react'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Fade from '@material-ui/core/Fade';
@@ -10,7 +10,7 @@ import useTheme from '@material-ui/core/styles/useTheme'
 
 import * as styles from './AppCardHorizontal.style'
 
-const AppCardHorizontal = props => {
+const AppCardHorizontal = memo(props => {
   const theme = useTheme()
   const {
     cover,
@@ -52,11 +52,11 @@ const AppCardHorizontal = props => {
             </Typography>
           </Fragment>
         ))}
-        {rating != null && (
-          <Fade in>
-            <Box>
+        <Box css={styles.rating.wrap}>
+          {rating != null && (
+            <Fade in>
               <Box
-                display='inline-flex'
+                display='flex'
                 alignItems='center'
               >
                 <Rating
@@ -71,13 +71,13 @@ const AppCardHorizontal = props => {
                   >({ratingCount})</Typography>
                 )}
               </Box>
-            </Box>
-          </Fade>
-        )}
+            </Fade>
+          )}
+        </Box>
       </Box>
     </Box>
   )
-}
+})
 AppCardHorizontal.propTypes = {
   cover: PropTypes.string,
   coverVariant: PropTypes.string,
@@ -86,5 +86,6 @@ AppCardHorizontal.propTypes = {
   rating: PropTypes.number,
   ratingCount: PropTypes.number,
 }
+AppCardHorizontal.displayName = 'AppCardHorizontal'
 
 export default AppCardHorizontal

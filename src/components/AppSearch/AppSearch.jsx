@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, css, ClassNames } from '@emotion/core'
-import { useState, useContext, useEffect } from 'react'
+import { memo, useState, useContext, useEffect } from 'react'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
@@ -16,7 +16,7 @@ import DataStoreContext from '../../contexts/data-store'
 
 import * as styles from './AppSearch.style'
 
-const AppSearch = () => {
+const AppSearch = memo(() => {
   const { setSearchText } = useContext(DataStoreContext)
 
   const [ searchValue, setSearchValue ] = useState('')
@@ -103,6 +103,7 @@ const AppSearch = () => {
       </Box>
     </Paper>
   )}</ClassNames>)
-}
+})
+AppSearch.displayName = 'AppSearch'
 
 export default AppSearch

@@ -28,3 +28,9 @@ export const info = {
     flex-grow: 1;
   `,
 }
+
+export const rating = {
+  wrap: css`
+    min-height: 19px;
+  `,
+}

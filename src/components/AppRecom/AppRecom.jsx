@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core'
 import {
+  memo,
   useEffect,
   useContext,
 } from 'react'
@@ -18,7 +19,7 @@ import DataStoreContext from '../../contexts/data-store'
 
 import * as styles from './AppRecom.style'
 
-const AppSkeleton = props => {
+const AppSkeleton = memo(props => {
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('md'));
   return (
@@ -34,9 +35,10 @@ const AppSkeleton = props => {
       </Box>
     </Box>
   )
-}
+})
+AppSkeleton.displayName = 'AppSkeleton'
 
-const AppRecom = () => {
+const AppRecom = memo(() => {
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('md'));
   const {
@@ -116,6 +118,8 @@ const AppRecom = () => {
       )}
     </Box>
   )
-}
+})
+AppRecom.displayName = 'AppRecom'
+
 
 export default AppRecom

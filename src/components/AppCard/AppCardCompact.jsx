@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core'
-import { Fragment } from 'react'
+import { memo, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
@@ -8,7 +8,7 @@ import useTheme from '@material-ui/core/styles/useTheme'
 
 import * as styles from './AppCardCompact.style'
 
-const AppCardCompact = props => {
+const AppCardCompact = memo(props => {
   const theme = useTheme()
   const {
     cover,
@@ -53,12 +53,13 @@ const AppCardCompact = props => {
       </Box>
     </Box>
   )
-}
+})
 AppCardCompact.propTypes = {
   cover: PropTypes.string,
   name: PropTypes.string,
   // author: PropTypes.string,
   genres: PropTypes.array,
 }
+AppCardCompact.displayName = 'AppCardCompact'
 
 export default AppCardCompact

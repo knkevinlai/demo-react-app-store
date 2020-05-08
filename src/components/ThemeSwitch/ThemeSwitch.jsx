@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import { useEffect, useState, useContext } from 'react'
+import { memo, useEffect, useState, useContext } from 'react'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import Brightness2OutlinedIcon from '@material-ui/icons/Brightness2Outlined'
 import Brightness2Icon from '@material-ui/icons/Brightness2'
@@ -9,7 +9,7 @@ import useTheme from '@material-ui/core/styles/useTheme'
 
 import ThemeContext from '../../contexts/theme'
 
-const ThemeSwitch = props => {
+const ThemeSwitch = memo(props => {
   const theme = useTheme()
   const { setPreset, PRESET, preset } = useContext(ThemeContext)
 
@@ -30,6 +30,7 @@ const ThemeSwitch = props => {
       {!isDarkMode ? <Brightness2OutlinedIcon/> : <Brightness2Icon/>}
     </ButtonBase>
   )
-}
+})
+ThemeSwitch.displayName = 'ThemeSwitch'
 
 export default ThemeSwitch
