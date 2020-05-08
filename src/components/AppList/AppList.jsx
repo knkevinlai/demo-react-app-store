@@ -17,6 +17,7 @@ import Color from 'color'
 import Fade from 'react-reveal/Fade'
 
 import DataStoreContext from '../../contexts/data-store'
+import AppDetailDialog from '../AppDetailDialog/AppDetailDialog'
 
 import AppCardHorizontal from '../AppCard/AppCardHorizontal'
 
@@ -103,21 +104,44 @@ const AppList = () => {
                           </Typography>
                         </Box>
                         <Box css={styles.card.container}>
-                          <AppCardHorizontal
-                            {..._appIdx % 2 !== 0
-                              ? {
-                                coverVariant: 'circle',
-                              } : {}}
+
+                          <AppDetailDialog
+                            title={_appFeed.name}
                             cover={_appFeed.artworkUrl100}
-                            name={_appFeed.name}
-                            author={_appFeed.artistName}
                             genres={_appFeed.genres.map(({ name }) => name)}
                             {...appDetail
                               ? {
+                                screenshots: [
+                                  ...appDetail.screenshotUrls,
+                                  ...appDetail.ipadScreenshotUrls,
+                                  ...appDetail.appletvScreenshotUrls,
+                                ],
+                                author: appDetail.artistName,
                                 rating: appDetail.averageUserRating,
                                 ratingCount: appDetail.userRatingCount,
+                                price: appDetail.formattedPrice,
+                                description: appDetail.description,
                               } : {}}
+                            trigger={({ handleOpen }) => (
+                              <AppCardHorizontal
+                                onClick={handleOpen}
+                                {..._appIdx % 2 !== 0
+                                  ? {
+                                    coverVariant: 'circle',
+                                  } : {}}
+                                cover={_appFeed.artworkUrl100}
+                                name={_appFeed.name}
+                                author={_appFeed.artistName}
+                                genres={_appFeed.genres.map(({ name }) => name)}
+                                {...appDetail
+                                  ? {
+                                    rating: appDetail.averageUserRating,
+                                    ratingCount: appDetail.userRatingCount,
+                                  } : {}}
+                              />
+                            )}
                           />
+
                         </Box>
                       </Box>
                     </Fade>

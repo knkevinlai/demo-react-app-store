@@ -2,6 +2,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
 } from 'react'
 import { createContext } from 'react'
 
@@ -60,11 +61,16 @@ export const DataStoreContextProvider = props => {
 
   // APP DETAIL
   const [ appDetails, setAppDetails ] = useState(new Map())
+  const appDetailsRef = useRef(appDetails)
 
   // METHODS
   const updateAppRecom = useCallback(async payload => {
     setIsFetchingAppRecom(true)
     const _appRcom = await fetchAppRecom(payload)
+    // AUTO FETCH APP DETAILS
+    const appIds = _appRcom.map(({ id }) => id)
+
+    setAppIdsToFetchDetail(appIds)
 
     setAppRecom(_appRcom)
     setIsFetchingAppRecom(false)
@@ -73,6 +79,7 @@ export const DataStoreContextProvider = props => {
   const updateAppListing = useCallback(async payload => {
     setIsFetchingAppListing(true)
     const _appListing = await fetchAppListing(payload)
+    // AUTO FETCH APP DETAILS
     const appIds = _appListing.map(({ id }) => id)
 
     setAppIdsToFetchDetail(appIds)
@@ -81,17 +88,22 @@ export const DataStoreContextProvider = props => {
     setIsFetchingAppListing(false)
   }, [])
 
+
   // AUTO FETCH APP DETAIL ON FETCHING NEW APP LISTING
   useEffect(() => {
     (async () => {
       if (appIdsToFetchDetail.length > 0) {
         const _appDetails = await fetchAppDetail({ ids: appIdsToFetchDetail })
-        setAppDetails(new Map([
+
+        const newAppDetails = new Map([
+          ...(appDetailsRef.current || []),
           ..._appDetails.map(_appDetail => ([ `${_appDetail.trackId}`, _appDetail ]))
-        ]))
+        ])
+        appDetailsRef.current = newAppDetails
+        setAppDetails(newAppDetails)
       }
     })()
-  }, [ appIdsToFetchDetail ])
+  }, [ appIdsToFetchDetail, appDetailsRef ])
 
   // SIDE EFFECT + DEBOUNCING 300 MILLISECOND TO PERFORM TEXT SEARCH FILTERING
   const debouncedSearchText = useDebounce(searchText, 300)

@@ -24,6 +24,7 @@ Open [http://localhost:5000](http://localhost:5000) to view it in the browser.
 ## Bonus Features 👍
 - PWA > essential UI skeleton and config
 - Dark theme (auto detection + user preference stored in browser's local storage)
+- App detail popup dialog with zoom-in capability of screenshots
 - API response schema validation
 - Minimum responsive
 - Loading indicator UI

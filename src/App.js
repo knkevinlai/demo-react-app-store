@@ -8,6 +8,7 @@ import Layout from './components/Layout/Layout'
 import ServiceWorkerHandler from './components/ServiceWorkerHandler/ServiceWorkerHandler'
 
 import './App.css' // GLOBAL STYLES
+import 'react-medium-image-zoom/dist/styles.css'
 
 const App = () => {
   return (

@@ -15,6 +15,7 @@ import Color from 'color'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 
 import AppCardCompact from '../AppCard/AppCardCompact'
+import AppDetailDialog from '../AppDetailDialog/AppDetailDialog'
 import DataStoreContext from '../../contexts/data-store'
 
 import * as styles from './AppRecom.style'
@@ -46,6 +47,8 @@ const AppRecom = memo(() => {
     appRecomFiltered,
     updateAppRecom,
     isFetchingAppRecom,
+
+    appDetails,
   } = useContext(DataStoreContext)
 
   useEffect(() => {
@@ -87,6 +90,7 @@ const AppRecom = memo(() => {
         <Box css={styles.scroller}>
           <Box css={styles.container}>
             {appRecomFiltered.map((_appFeed, _appIdx) => {
+              const appDetail = appDetails.get(_appFeed.id)
               return (
                 <Box
                   m={1}
@@ -97,11 +101,32 @@ const AppRecom = memo(() => {
                   `}
                   key={_appIdx}
                 >
-                  <AppCardCompact
+                  <AppDetailDialog
+                    title={_appFeed.name}
                     cover={_appFeed.artworkUrl100}
-                    name={_appFeed.name}
-                    author={_appFeed.artistName}
                     genres={_appFeed.genres.map(({ name }) => name)}
+                    {...appDetail
+                      ? {
+                        screenshots: [
+                          ...appDetail.screenshotUrls,
+                          ...appDetail.ipadScreenshotUrls,
+                          ...appDetail.appletvScreenshotUrls,
+                        ],
+                        author: appDetail.artistName,
+                        rating: appDetail.averageUserRating,
+                        ratingCount: appDetail.userRatingCount,
+                        price: appDetail.formattedPrice,
+                        description: appDetail.description,
+                      } : {}}
+                    trigger={({ handleOpen }) => (
+                      <AppCardCompact
+                        onClick={handleOpen}
+                        cover={_appFeed.artworkUrl100}
+                        name={_appFeed.name}
+                        author={_appFeed.artistName}
+                        genres={_appFeed.genres.map(({ name }) => name)}
+                      />
+                    )}
                   />
                 </Box>
               )
