@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
 
-function App() {
+import { DataStoreContextProvider } from './contexts/data-store'
+import { ThemeContextProvider } from './contexts/theme'
+import { ServiceWorkerContextProvider } from './contexts/service-worker'
+import ThemeProvider from './components/Material/ThemeProvider'
+import Layout from './components/Layout/Layout'
+import ServiceWorkerHandler from './components/ServiceWorkerHandler/ServiceWorkerHandler'
+
+import './App.css' // GLOBAL STYLES
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <ServiceWorkerContextProvider>
+      <ThemeContextProvider>
+        <DataStoreContextProvider>
+          <ThemeProvider>
+            <ServiceWorkerHandler/>
+            <Layout/>
+          </ThemeProvider>
+        </DataStoreContextProvider>
+      </ThemeContextProvider>
+    </ServiceWorkerContextProvider>
+  )
 }
 
-export default App;
+export default App
