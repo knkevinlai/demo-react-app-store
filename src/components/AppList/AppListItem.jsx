@@ -52,7 +52,7 @@ const AppListItem = memo(props => {
             trigger={({ handleOpen }) => (
               <AppCardHorizontal
                 onClick={handleOpen}
-                {...count - 1 % 2 !== 0
+                {...(count - 1) % 2 !== 0
                   ? {
                     coverVariant: 'circle',
                   } : {}}
