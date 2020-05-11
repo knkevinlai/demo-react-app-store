@@ -4,12 +4,12 @@ import PropTypes from 'prop-types'
 import { memo, Fragment } from 'react'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
-import Fade from '@material-ui/core/Fade';
-import Rating from '@material-ui/lab/Rating'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import useTheme from '@material-ui/core/styles/useTheme'
 
 import * as styles from './AppCardHorizontal.style'
+
+import CustomRating from '../CustomRating/CustomRating'
 
 const AppCardHorizontal = memo(props => {
   const theme = useTheme()
@@ -27,6 +27,7 @@ const AppCardHorizontal = memo(props => {
     <ButtonBase
       onClick={onClick}
       disabled={!onClick}
+      css={styles.buttonBase}
     >
       <Box css={styles.root} textAlign='left'>
         <Box css={css`
@@ -47,7 +48,7 @@ const AppCardHorizontal = memo(props => {
         >
           <Typography>{name}</Typography>
           {(genres || []).map((genre, idx) => (
-            <Fragment key={genre}>
+            <Fragment key={`${idx}_${genre}`}>
               {idx > 0 && <Typography variant='caption' display='inline'>, </Typography>}
               <Typography
                 display='inline'
@@ -60,24 +61,18 @@ const AppCardHorizontal = memo(props => {
           ))}
           <Box css={styles.rating.wrap}>
             {rating != null && (
-              <Fade in>
-                <Box
-                  display='flex'
-                  alignItems='center'
-                >
-                  <Rating
-                    value={rating}
-                    name={`rating-for-${name}`}
-                    size='small'
-                  />
-                  {ratingCount != null && (
-                    <Typography
-                      variant='caption'
-                      style={{ marginLeft: theme.spacing(0.5) }}
-                    >({ratingCount})</Typography>
-                  )}
-                </Box>
-              </Fade>
+              <Box
+                display='flex'
+                alignItems='center'
+              >
+                <CustomRating value={rating}/>
+                {ratingCount != null && (
+                  <Typography
+                    variant='caption'
+                    style={{ marginLeft: theme.spacing(0.5) }}
+                  >({ratingCount})</Typography>
+                )}
+              </Box>
             )}
           </Box>
         </Box>

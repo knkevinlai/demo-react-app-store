@@ -24,12 +24,15 @@ const AppCardCompact = memo(props => {
       onClick={onClick}
       disabled={!onClick}
     >
-      <Box css={css`
-        ${styles.root}
-        ${theme.breakpoints.up('md')} {
-          ${styles.rootScreenUpMD}
-        }
-      `}>
+      <Box
+        textAlign='left'
+        css={css`
+          ${styles.root}
+          ${theme.breakpoints.up('md')} {
+            ${styles.rootScreenUpMD}
+          }
+        `}
+      >
         <Box css={styles.image.wrap}>
           <img
             css={styles.image.image}

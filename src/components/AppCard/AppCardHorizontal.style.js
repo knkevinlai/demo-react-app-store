@@ -1,5 +1,10 @@
 import { css } from '@emotion/core'
 
+export const buttonBase = css`
+  display: block;
+  width: 100%;
+`
+
 export const root = css`
   display: flex;
   align-items: center;

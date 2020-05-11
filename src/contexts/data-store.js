@@ -5,6 +5,7 @@ import React, {
   useRef,
 } from 'react'
 import { createContext } from 'react'
+import uniq from 'lodash/uniq'
 
 import axios from '../lib/axios'
 
@@ -13,8 +14,17 @@ import AppDetailResponseModel from '../model/AppDetailResponseModel'
 
 import useDebounce from '../hooks/useDebounce'
 
+import topGrossing100Mock from '../json/top-grossing-100.json'
+import topFree100Mock from '../json/top-free-100.json'
+
+const isUseMock = false // FOR LOCAL TESTING
+
 const DataStoreContext = createContext({})
 
+const fetchAppRecomMock = async ({ limit = 10 } = {}) => {
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  return topGrossing100Mock.feed.results.slice(0, limit) || []
+}
 const fetchAppRecom = async ({ limit = 10 } = {}) => {
   const response = await axios.get(`https://rss.itunes.apple.com/api/v1/hk/ios-apps/top-grossing/all/${limit}/explicit.json`)
 
@@ -23,6 +33,11 @@ const fetchAppRecom = async ({ limit = 10 } = {}) => {
   appFeedsModel.validate()
 
   return appFeedsModel.data.feed.results || []
+}
+
+const fetchAppListingMock = async ({ limit = 10 } = {}) => {
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  return topFree100Mock.feed.results.slice(0, limit) || []
 }
 
 const fetchAppListing = async ({ limit = 10 } = {}) => {
@@ -36,6 +51,8 @@ const fetchAppListing = async ({ limit = 10 } = {}) => {
 }
 
 export const fetchAppDetail = async ({ ids = [] } = {}) => {
+  if (ids.length === 0) { return [] }
+
   const response = await axios.get(`https://itunes.apple.com/hk/lookup?id=${ids.join(',')}`)
 
   // VALIDATE SCHEMA FROM API
@@ -56,7 +73,6 @@ export const DataStoreContextProvider = props => {
   // APP LISTING
   const [ appListing, setAppListing ] = useState([])
   const [ appListingFiltered, setAppListingFiltered ] = useState(appListing)
-  const [ appIdsToFetchDetail, setAppIdsToFetchDetail ] = useState([])
   const [ isFetchingAppListing, setIsFetchingAppListing ] = useState(false)
 
   // APP DETAIL
@@ -64,49 +80,57 @@ export const DataStoreContextProvider = props => {
   const appDetailsRef = useRef(appDetails)
 
   // METHODS
+  const updateAppDetails = useCallback(async ({ ids }) => {
+    if (!ids || ids.length === 0) { return }
+    const idsNotFetchedYet = ids.filter(_id => ![ ...(appDetailsRef.current || (new Map())).keys() ].includes(_id))
+
+    if (idsNotFetchedYet.length > 0) {
+      const _appDetails = await fetchAppDetail({ ids: idsNotFetchedYet })
+
+      const newAppDetails = new Map([
+        ...(appDetailsRef.current || []),
+        ..._appDetails.map(_appDetail => ([ `${_appDetail.trackId}`, _appDetail ]))
+      ])
+      appDetailsRef.current = newAppDetails
+      setAppDetails(newAppDetails)
+    }
+  }, [])
+
   const updateAppRecom = useCallback(async payload => {
     setIsFetchingAppRecom(true)
-    const _appRcom = await fetchAppRecom(payload)
+    const _appRcom = isUseMock
+      ? await fetchAppRecomMock(payload)
+      : await fetchAppRecom(payload)
     // AUTO FETCH APP DETAILS
     const appIds = _appRcom.map(({ id }) => id)
 
-    setAppIdsToFetchDetail(appIds)
+    // setAppIdsToFetchDetail(appIds) // DEPREPCATED
+    await updateAppDetails({ ids: appIds })
 
     setAppRecom(_appRcom)
     setIsFetchingAppRecom(false)
-  }, [])
+  }, [ updateAppDetails ])
 
   const updateAppListing = useCallback(async payload => {
     setIsFetchingAppListing(true)
-    const _appListing = await fetchAppListing(payload)
-    // AUTO FETCH APP DETAILS
+
+    const fetchPromise = isUseMock
+      ? fetchAppListingMock(payload)
+      : fetchAppListing(payload)
+
+    const _appListing = await fetchPromise
+
     const appIds = _appListing.map(({ id }) => id)
 
-    setAppIdsToFetchDetail(appIds)
+    await updateAppDetails({ ids: appIds })
 
     setAppListing(_appListing)
     setIsFetchingAppListing(false)
-  }, [])
+  }, [ updateAppDetails ])
 
-
-  // AUTO FETCH APP DETAIL ON FETCHING NEW APP LISTING
-  useEffect(() => {
-    (async () => {
-      if (appIdsToFetchDetail.length > 0) {
-        const _appDetails = await fetchAppDetail({ ids: appIdsToFetchDetail })
-
-        const newAppDetails = new Map([
-          ...(appDetailsRef.current || []),
-          ..._appDetails.map(_appDetail => ([ `${_appDetail.trackId}`, _appDetail ]))
-        ])
-        appDetailsRef.current = newAppDetails
-        setAppDetails(newAppDetails)
-      }
-    })()
-  }, [ appIdsToFetchDetail, appDetailsRef ])
 
   // SIDE EFFECT + DEBOUNCING 300 MILLISECOND TO PERFORM TEXT SEARCH FILTERING
-  const debouncedSearchText = useDebounce(searchText, 300)
+  const debouncedSearchText = useDebounce(searchText, 400)
 
   useEffect(() => {
     const _searchText = (debouncedSearchText || '').toLowerCase()
@@ -118,10 +142,17 @@ export const DataStoreContextProvider = props => {
       return
     }
 
-    // FILTER appListing
-    if (appListing) {
-      setAppListingFiltered(appListing.filter(appFeed => {
-        const appDetail = appDetails.get(appFeed.id)
+    // FETCH FROM API AGAIN WITH EVERY TEXT SEARCH
+    (async () => {
+      setIsFetchingAppRecom(true)
+      setIsFetchingAppListing(true)
+      const [ _appRecom, _appListing ] = await Promise.all([
+        isUseMock ? fetchAppRecomMock({ limit: 100 }) : fetchAppRecom({ limit: 100 }),
+        isUseMock ? fetchAppListingMock({ limit: 100 }) : fetchAppListing({ limit: 100 }),
+      ])
+
+      const _appListingFiltered = (_appListing || []).filter(appFeed => {
+        const appDetail = appDetailsRef.current.get(appFeed.id)
 
         return [
           (appFeed.name || '').toLowerCase().includes(_searchText),
@@ -129,13 +160,10 @@ export const DataStoreContextProvider = props => {
           appFeed.genres && appFeed.genres.some(genre => (genre.name || '').toLowerCase().includes(_searchText)),
           appDetail && (appDetail.description || '').toLowerCase().includes(_searchText),
         ].some(cond => cond)
-      }))
-    }
+      })
 
-    // FILTER appRecom
-    if (appRecom) {
-      setAppRecomFiltered(appRecom.filter(appFeed => {
-        const appDetail = appDetails.get(appFeed.id)
+      const _appRecomFiltered = (_appRecom || []).filter(appFeed => {
+        const appDetail = appDetailsRef.current.get(appFeed.id)
 
         return [
           (appFeed.name || '').toLowerCase().includes(_searchText),
@@ -143,9 +171,22 @@ export const DataStoreContextProvider = props => {
           appFeed.genres && appFeed.genres.some(genre => (genre.name || '').toLowerCase().includes(_searchText)),
           appDetail && (appDetail.description || '').toLowerCase().includes(_searchText),
         ].some(cond => cond)
-      }))
-    }
-  }, [ debouncedSearchText, appRecom, appListing, appDetails ])
+      })
+
+      setAppListingFiltered(_appListingFiltered)
+      setAppRecomFiltered(_appRecomFiltered)
+
+      const appIds = uniq([
+        ...(_appListingFiltered || []).map(({ id }) => id),
+        ...(_appRecomFiltered || []).map(({ id }) => id),
+      ])
+
+      await updateAppDetails({ ids: appIds })
+
+      setIsFetchingAppRecom(false)
+      setIsFetchingAppListing(false)
+    })()
+  }, [ debouncedSearchText, appRecom, appListing, appDetailsRef, updateAppDetails ])
 
   return (
     <DataStoreContext.Provider
