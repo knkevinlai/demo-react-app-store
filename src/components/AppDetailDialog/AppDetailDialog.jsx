@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
@@ -9,8 +9,9 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import Zoom from 'react-medium-image-zoom'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import Rating from '@material-ui/lab/Rating'
 import useTheme from '@material-ui/core/styles/useTheme'
+
+import CustomRating from '../CustomRating/CustomRating'
 
 import * as styles from './AppDetailDialog.style'
 import { Typography } from '@material-ui/core'
@@ -30,12 +31,10 @@ const AppDetailDialog = props => {
     genres,
   } = props
 
-  console.log(`screenshots`, screenshots)
-
   const [ isDialogOpen, setIsDialogOpen ] = useState(false)
 
-  const handleOpen = () => setIsDialogOpen(true)
-  const handleClose = () => setIsDialogOpen(false)
+  const handleOpen = useCallback(() => setIsDialogOpen(true), [])
+  const handleClose = useCallback(() => setIsDialogOpen(false), [])
   return (
     <Fragment>
       {trigger && trigger({
@@ -86,11 +85,11 @@ const AppDetailDialog = props => {
                     display='flex'
                     alignItems='center'
                   >
-                    <Rating
-                      value={rating}
-                      name={`rating-for-${title}`}
-                      size='small'
-                    />
+                    <Typography
+                      variant='caption'
+                      style={{ lineHeight: 1 }} // VERTICALLY ALIGNED MIDDLE
+                    >{rating.toFixed(1)}</Typography>
+                    <CustomRating value={rating} />
                     {ratingCount != null && (
                       <Typography
                         variant='caption'

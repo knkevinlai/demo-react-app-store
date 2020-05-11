@@ -1,6 +1,12 @@
 import { css } from '@emotion/core'
 
-export const root = css``
+export const root = css`
+  min-height: 100%;
+`
+
+export const infiniteScroll = {
+  wrap: css``,
+}
 
 export const list = {
   wrap: css``,
@@ -11,23 +17,20 @@ export const list = {
   wrapScreenUpLG: css`
     grid-template-columns: 1fr 1fr 1fr;
   `,
+  bottom: css`
+    display: grid;
+  `,
+  bottomScreenUpMD: css`
+    grid-column-start: 1;
+    grid-column-end: span 2;
+  `,
+  bottomScreenUpLG: css`
+    grid-column-start: 1;
+    grid-column-end: span 3;
+  `,
+  /*
+  */
 }
-
-export const card = {
-  wrap: css`
-    display: flex;
-    align-items: center;
-  `,
-  count: css`
-    width: 2.4em;
-    flex-shrink: 0;
-    text-align: center;
-  `,
-  container: css`
-    flex: grow: 1;
-  `,
-}
-
 
 export const emptyResult = {
   wrap: css`

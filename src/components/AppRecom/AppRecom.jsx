@@ -13,6 +13,7 @@ import MoodBadIcon from '@material-ui/icons/MoodBad'
 import useTheme from '@material-ui/core/styles/useTheme'
 import Color from 'color'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
+import uniq from 'lodash/uniq'
 
 import AppCardCompact from '../AppCard/AppCardCompact'
 import AppDetailDialog from '../AppDetailDialog/AppDetailDialog'
@@ -104,7 +105,7 @@ const AppRecom = memo(() => {
                   <AppDetailDialog
                     title={_appFeed.name}
                     cover={_appFeed.artworkUrl100}
-                    genres={_appFeed.genres.map(({ name }) => name)}
+                    genres={uniq(_appFeed.genres.map(({ name }) => name))}
                     {...appDetail
                       ? {
                         screenshots: [
@@ -124,7 +125,7 @@ const AppRecom = memo(() => {
                         cover={_appFeed.artworkUrl100}
                         name={_appFeed.name}
                         author={_appFeed.artistName}
-                        genres={_appFeed.genres.map(({ name }) => name)}
+                        genres={uniq(_appFeed.genres.map(({ name }) => name))}
                       />
                     )}
                   />
