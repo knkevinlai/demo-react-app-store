@@ -10,5 +10,5 @@ export default function useDebounce(value, delay) {
     debounceSetDebouncedValueRef.current(value)
   }, [ value ])
 
-  return debouncedValue
+  return [ debouncedValue, setDebouncedValue ]
 }

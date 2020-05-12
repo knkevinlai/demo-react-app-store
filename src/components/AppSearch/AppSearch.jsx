@@ -17,7 +17,7 @@ import DataStoreContext from '../../contexts/data-store'
 import * as styles from './AppSearch.style'
 
 const AppSearch = memo(() => {
-  const { setSearchText } = useContext(DataStoreContext)
+  const { setSearchText, clearSearchText } = useContext(DataStoreContext)
 
   const [ searchValue, setSearchValue ] = useState('')
 
@@ -73,7 +73,11 @@ const AppSearch = memo(() => {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      onClick={() => setSearchValue('')}
+                      // onClick={() => setSearchValue('')}
+                      onClick={() => { 
+                        setSearchValue('')
+                        clearSearchText() // TO TRIGGER RESET UI IMMEDIATELY
+                      }}
                       edge="end"
                     >
                       <BackspaceOutlinedIcon/>

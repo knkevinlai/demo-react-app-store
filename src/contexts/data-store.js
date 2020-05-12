@@ -130,7 +130,9 @@ export const DataStoreContextProvider = props => {
 
 
   // SIDE EFFECT + DEBOUNCING 300 MILLISECOND TO PERFORM TEXT SEARCH FILTERING
-  const debouncedSearchText = useDebounce(searchText, 400)
+  const [ debouncedSearchText, setDebouncedSearchText ] = useDebounce(searchText, 400)
+
+  const clearSearchText = useCallback(() => setDebouncedSearchText(''), [ setDebouncedSearchText ])
 
   useEffect(() => {
     const _searchText = (debouncedSearchText || '').toLowerCase()
@@ -193,6 +195,7 @@ export const DataStoreContextProvider = props => {
       value={{
         // APP SEARCH
         searchText, setSearchText,
+        clearSearchText,
 
         // APP RECOMMENDATION
         appRecom, setAppRecom,
