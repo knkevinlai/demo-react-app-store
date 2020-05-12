@@ -18,6 +18,7 @@ import topGrossing100Mock from '../json/top-grossing-100.json'
 import topFree100Mock from '../json/top-free-100.json'
 
 const isUseMock = false // FOR LOCAL TESTING
+const isUseFetchAppDetail = true // FOR LOCAL TESTING
 
 const DataStoreContext = createContext({})
 
@@ -81,6 +82,7 @@ export const DataStoreContextProvider = props => {
 
   // METHODS
   const updateAppDetails = useCallback(async ({ ids }) => {
+    if (!isUseFetchAppDetail) { return }
     if (!ids || ids.length === 0) { return }
     const idsNotFetchedYet = ids.filter(_id => ![ ...(appDetailsRef.current || (new Map())).keys() ].includes(_id))
 

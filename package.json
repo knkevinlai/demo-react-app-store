@@ -55,6 +55,7 @@
     "eslint-plugin-react-hooks": "^4.0.0",
     "favicons": "^6.0.0",
     "lodash": "^4.17.15",
+    "react-in-viewport": "^1.0.0-alpha.11",
     "react-infinite-scroll-component": "^5.0.4",
     "react-medium-image-zoom": "^4.3.0",
     "react-reveal": "^1.2.2"

@@ -6,6 +6,7 @@ import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import useTheme from '@material-ui/core/styles/useTheme'
+import handleViewport from 'react-in-viewport'
 
 import * as styles from './AppCardHorizontal.style'
 
@@ -21,6 +22,7 @@ const AppCardHorizontal = memo(props => {
     rating,
     ratingCount,
     onClick,
+    forwardedRef,
   } = props
 
   return (
@@ -28,6 +30,7 @@ const AppCardHorizontal = memo(props => {
       onClick={onClick}
       disabled={!onClick}
       css={styles.buttonBase}
+      ref={forwardedRef}
     >
       <Box css={styles.root} textAlign='left'>
         <Box css={css`
@@ -88,7 +91,20 @@ AppCardHorizontal.propTypes = {
   rating: PropTypes.number,
   ratingCount: PropTypes.number,
   onClick: PropTypes.func,
+  forwardedRef: PropTypes.any,
 }
 AppCardHorizontal.displayName = 'AppCardHorizontal'
+
+const AppCardHorizontalWrapper = memo(props => (
+  <Box style={{
+    ...!props.inViewport ? { opacity: 0 } : {}
+  }}>
+    <AppCardHorizontal {...props} />
+  </Box>
+))
+AppCardHorizontalWrapper.displayName = 'AppCardHorizontalWrapper'
+AppCardHorizontalWrapper.propTypes = { inViewport: PropTypes.bool }
+
+export const AppCardHorizontalViewPort = handleViewport(AppCardHorizontalWrapper)
 
 export default AppCardHorizontal

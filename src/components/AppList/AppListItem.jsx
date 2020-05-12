@@ -10,7 +10,7 @@ import Fade from 'react-reveal/Fade'
 import * as styles from './AppListItem.style'
 
 import AppDetailDialog from '../AppDetailDialog/AppDetailDialog'
-import AppCardHorizontal from '../AppCard/AppCardHorizontal'
+import { AppCardHorizontalViewPort } from '../AppCard/AppCardHorizontal'
 
 const AppListItem = memo(props => {
   const {
@@ -50,7 +50,7 @@ const AppListItem = memo(props => {
             price={price}
             description={description}
             trigger={({ handleOpen }) => (
-              <AppCardHorizontal
+              <AppCardHorizontalViewPort
                 onClick={handleOpen}
                 {...(count - 1) % 2 !== 0
                   ? {
